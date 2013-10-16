@@ -1,0 +1,16 @@
+<% include ../head %>
+<div class="container">
+    <h1><%= (result._id ? result._id : '') %></h1>
+
+    <form method="post" class="">
+        <label>Place Name: <input type="text" name="name" value="<%= (result.name ? result.name : '')%>"/></label><br>
+        <div style="">
+            <input type="hidden" name="loc" class="editor-for-dbgeography" value="<%= (result.loc ? JSON.stringify(result.loc) : '')%>"/>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Save Changes"/>
+    </form>
+    </div>
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../footer %>

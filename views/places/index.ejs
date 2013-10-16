@@ -1,0 +1,28 @@
+<% include ../head %>
+<div class="container">
+        <h3>Places</h3>
+
+    <div class="row-fluid">
+        <table class="table table-striped ">
+            <thead>
+            <tr>
+                <th>Commands</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for(var i=0; i< results.length; i++) {
+                var obj = results[i];%>
+                <tr>
+                    <td><a href="/places/edit/<%= obj._id %>">Edit</a> | <a href="/places/delete/<%= obj._id %>">Delete</a></td>
+                    <td><%= obj.name %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <a href="/places/create/">Create New Location</a>
+</div>
+<% include ../jqueryScripts %>
+<% include ../footer %>

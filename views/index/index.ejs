@@ -1,0 +1,89 @@
+<% include ../head %>
+
+<div id="featurePanel" class="featurePanel">
+    <ul class="featureList">
+        <li class="featureThumb"></li>
+        <li class="featureThumb"></li>
+        <li class="featureThumb"></li>
+        <li class="featureThumb"></li>
+    </ul>
+    <!--<div class="featureThumb"></div>-->
+    <!--<div class="featureThumb"></div>-->
+</div>
+<div id="map" class="fillMap"></div>
+
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+
+<script>
+    $(function(){
+        var map = L.map('map');
+
+        var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var mapquestUrl = 'http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png';
+        var subDomains = ['otile1', 'otile2', 'otile3', 'otile4'];
+        var mapquestAttrib = 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
+        var mapquest = new L.TileLayer(mapquestUrl, {maxZoom: 18, attribution: mapquestAttrib, subdomains: subDomains});
+        var dbItems = new L.FeatureGroup().addTo(map);
+
+        var rawDBItems = [];
+        var drawnItems = new L.FeatureGroup().addTo(map);
+
+        var baseLayers = {
+            "OSM": osmLayer,
+            "MapQuest Satalite": mapquest
+        };
+
+        var overlays = {
+            "DB Features": dbItems
+        };
+
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+        map.fitBounds([[42.08191667830631, -113.04931640625], [35.22767235493586, -121.83837890625]]);
+
+        $.ajax({
+            dataType: "json",
+            url: '/places/list',
+            success: function(data){
+                rawDBItems = data;
+                for (var i = 0; i < rawDBItems.length; i++) {
+                    var obj = rawDBItems[i];
+
+                    dbItems.addLayer(L.geoJson(obj.loc,
+                        {
+                            onEachFeature: function (feature, layer) {
+                                layer.feature.properties = obj;
+                                layer.bindPopup(obj.name + '<br><a href="/places/edit/' + obj._id + '">Edit</a>');
+                                featurePanel
+                                layer.on('click', function(event){
+                                    //alert(layer.feature.properties._id);
+                                });
+                            }
+                        }
+                    ));
+                    map.fitBounds(dbItems.getBounds());
+                }
+            }
+        });
+
+        function refreshList() {
+            var tile;
+            $.each(_layerCurrent.graphics,function(index,value){
+                //find the corresponding tile
+                tile = $.grep($("ul.tilelist li"),function(n,i){return n.id == "item"+value.attributes.getValueCI("Number")})[0];
+                if (_map.extent.contains(value.geometry)) {
+                    if ($(tile).css("display") == "none") $(tile).stop().fadeIn();
+                } else {
+                    if ($(tile).css("display") != "none") $(tile).stop().fadeOut(1000);
+                }
+            });
+        }
+
+    });
+</script>
+
+<% include ../footer %>

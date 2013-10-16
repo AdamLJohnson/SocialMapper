@@ -1,0 +1,12 @@
+<% include ../head %>
+<div class="container">
+    <form method="post">
+        <label>Place Name: <input type="text" name="name"/></label><br>
+        <input type="hidden" name="loc" class="editor-for-dbgeography" />
+        <input class="btn btn-primary" type="submit" value="Save Changes"/>
+    </form>
+</div>
+<% include ../jqueryScripts %>
+<% include ../leafletScripts %>
+<script src="/javascripts/geomEditor.js"></script>
+<% include ../footer %>
